@@ -8,6 +8,7 @@ border-radius: 8px;
 padding: 0px;
 color: #363AAA;
 margin: 5px;
+margin-bottom: 10px;
 
 .contentBox {
 
@@ -48,14 +49,14 @@ hr {
 }
 input {
   width: 100%;
-  background-color: #F4F4F4;
+  background-color: #f9f9f9;
   color: #363AAA;
   border: 0;
-  padding: 14px 16px;
+  padding: 8px 16px;
   margin-bottom: 14px;
   border-radius: 10000px;
   ::placeholder {
-    color: #333333;
+    color: #363AAA;
     opacity: 1;
   }
 }
@@ -76,6 +77,10 @@ width: 100%;
 margin: 0px;
 padding: 5px;
 background: #BEBEBE;
+background-image: url("https://imagetourlconverter.com/files/HTGeOgxEW4397324.jpg");
+background-position: top 4px right 4px;
+background-size: 65px;
+background-repeat: no-repeat;
 border-bottom: 3px solid #4047FF;
 border-top: 0px;
 border-left: 0px;
@@ -131,13 +136,13 @@ const Box = styled.div`
   input {
     width: 100%;
     background-color: #F4F4F4;
-    color: #333333;
+    color: #999999;
     border: 0;
     padding: 14px 16px;
     margin-bottom: 14px;
     border-radius: 10000px;
     ::placeholder {
-      color: #333333;
+      color: #999999;
       opacity: 1;
     }
   }
