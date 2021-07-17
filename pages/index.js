@@ -34,6 +34,38 @@ function ProfileSidebar(propriedades){
   )
 }
 
+function ProfileRelationsBox(propriedades) {
+
+  return (
+    <OpenTab>
+      <BarTab/>
+
+      <div className="contentBox">
+
+      <ProfileRelationsBoxWrapper>
+        <h2 className="smallTitle">
+          {propriedades.title} ({propriedades.items.length})
+        </h2>
+
+        <ul>
+          {propriedades.items.slice(0,6).map((itemAtual) => {
+            return (
+              <li key={itemAtual}>
+                <a href={itemAtual.html_url} key={itemAtual} target="_blank" rel="noopener noreferrer">
+                  <img src={itemAtual.avatar_url} />
+                  <span>{itemAtual.login}</span>
+                </a>
+              </li>
+            )
+          })}
+        </ul>
+      </ProfileRelationsBoxWrapper>
+      </div>
+    </OpenTab>
+
+  );
+}
+
 
 export default function Home() {
 
@@ -58,6 +90,21 @@ export default function Home() {
       image: 'https://media1.giphy.com/media/bPCwGUF2sKjyE/giphy.gif?cid=ecf05e479dhrnm9svhcwfh2d3akxe90f2ifaqzyjxdgfxpz2&rid=giphy.gif&ct=g'
     }  
   ]);
+
+  const [seguidores, setSeguidores] = React.useState([]);
+
+  React.useEffect(function(){
+
+    fetch('https://api.github.com/users/peas/followers')
+    .then(function (respostaDoServidor){
+      return respostaDoServidor.json();
+    })
+    .then(function(respostaCompleta){
+      setSeguidores(respostaCompleta);
+    })
+  }, [])
+  
+
 
   return (
 
@@ -135,10 +182,13 @@ export default function Home() {
 
         <div className="profileRelationsArea" style={{ gridArea: "profileRelationsArea"}}>
 
+          <ProfileRelationsBox title={"Seguidores"} items={seguidores}/> 
+
           <OpenTab>
             <BarTab/>
 
             <div className="contentBox">
+
 
               <ProfileRelationsBoxWrapper>
                 <h2 className="smallTitle">
