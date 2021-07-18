@@ -50,7 +50,7 @@ function ProfileRelationsBox(propriedades) {
         <ul>
           {propriedades.items.slice(0,6).map((itemAtual) => {
             return (
-              <li key={itemAtual}>
+              <li key={itemAtual.id}>
                 <a href={itemAtual.html_url} key={itemAtual} target="_blank" rel="noopener noreferrer">
                   <img src={itemAtual.avatar_url} />
                   <span>{itemAtual.login}</span>
@@ -72,24 +72,7 @@ export default function Home() {
   
   const githubUser = "avamelillo";
   const pessoasFavoritas = ['deblah','imKethy','hagsilva', 'bruperez', 'fbison', 'juliarezende34'];
-  const [comunidades, setComunidades] = React.useState([
-    {
-      id: '0000',
-      title: 'ENA',
-      link: 'https://joelgc.com/',
-      image: 'https://64.media.tumblr.com/8dc8a5d4f612117d0df15ac487da3193/9e87251af39a760a-60/s540x810/68e9b9efbc29e9c2b2d49912b75319d4c3a77180.gif'},
-    {
-      id: '234835',
-      title: 'The owl house',
-      link: 'https://www.theowlclub.net/',
-      image: 'https://media2.giphy.com/media/EozzlYcw9C29zCOMq0/giphy.gif?cid=ecf05e47qt6eioze376ikp55zz40ad4o5vgxo5i49vbfnv3t&rid=giphy.gif&ct=g'},
-    {
-      id: '52368664',
-      title: 'Info coltec',
-      link: 'https://static01.nyt.com/images/2016/08/05/us/05onfire1_xp/05onfire1_xp-videoSixteenByNineJumbo1600-v2.jpg',
-      image: 'https://media1.giphy.com/media/bPCwGUF2sKjyE/giphy.gif?cid=ecf05e479dhrnm9svhcwfh2d3akxe90f2ifaqzyjxdgfxpz2&rid=giphy.gif&ct=g'
-    }  
-  ]);
+  const [comunidades, setComunidades] = React.useState([]);
 
   const [seguidores, setSeguidores] = React.useState([]);
 
@@ -101,6 +84,33 @@ export default function Home() {
     })
     .then(function(respostaCompleta){
       setSeguidores(respostaCompleta);
+    })
+
+
+    //API GraphQL
+
+    fetch('https://graphql.datocms.com/', {
+
+      method: 'POST',
+      headers: {
+        'Authorization': 'e88c6f4bcc9741fa124fdccc32a306',
+        'Content-type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({ "query": `query {
+        allComunidades {
+          id
+          title
+          link
+          imageUrl
+        }
+      }` })
+    })
+    .then((response) => response.json())
+    .then((respostaCompleta) => {
+      const comunidadesDato = respostaCompleta.data.allComunidades;
+      setComunidades(comunidadesDato);
+      console.log(comunidades);
     })
   }, [])
   
@@ -143,16 +153,31 @@ export default function Home() {
                 e.preventDefault();
                 const dadosForm = new FormData(e.target);
 
+
                 const comunidadeNova = {
-                  id: new Date().toISOString(),
                   title: dadosForm.get('title'),
                   link: dadosForm.get('link'),
-                  image: dadosForm.get('image')
+                  imageUrl: dadosForm.get('image')
                 }
-                const comunidadesAtualizadas = [...comunidades, comunidadeNova];
-                setComunidades(comunidadesAtualizadas);
 
+                fetch('/api/comunidades', {
+                  method: "POST",
+                  headers: {
+                    'Content-type': 'application/json',
+                  },
+                  body: JSON.stringify(comunidadeNova)
+                })
+                .then(async (response) => {
+
+                  const dados = await response.json();
+                  console.log(dados.registroCriado);
+                  const comunidadeNova = dados.registroCriado;
+
+                  const comunidadesAtualizadas = [...comunidades, comunidadeNova];
+                  setComunidades(comunidadesAtualizadas);
+                })
               }}>
+                
                 <input 
                   placeholder="Qual vai ser o nome da sua comunidade?"
                   name="title"
@@ -200,7 +225,7 @@ export default function Home() {
                       return (
                         <li key={itemAtual.id}>
                           <a href={itemAtual.link} key={itemAtual.title} target="_blank" rel="noopener noreferrer">
-                            <img src={itemAtual.image} />
+                            <img src={itemAtual.imageUrl} />
                             <span>{itemAtual.title}</span>
                           </a>
                         </li>
